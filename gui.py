@@ -1,7 +1,8 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QTextEdit
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QTextEdit, QToolBar
 from decision_maker_app import DecisionMakerApp
 from PySide6.QtCore import QThread, Signal
+from PySide6.QtGui import QAction
 
 class ScoreCalculatorThread(QThread):
     # Define a signal to emit the output
@@ -21,10 +22,6 @@ class DecisionMakerGUI(QMainWindow):
         super().__init__()
         self.decision_maker_app = DecisionMakerApp()
         self.setWindowTitle("Decision Making Process with AI Assistance")
-        
-        # Set the fixed window width
-        width = 500
-        self.setFixedWidth(width)
         
         # Main layout
         self.layout = QVBoxLayout()
@@ -67,6 +64,25 @@ class DecisionMakerGUI(QMainWindow):
 
         # Connect the thread's output signal to the method that updates the text area
         self.score_calculator_thread.output.connect(self.update_text_area)
+        
+        # Create a toolbar
+        toolbar = QToolBar()
+        self.addToolBar(toolbar)
+
+        # Create an action
+        action = QAction("Clear", self)
+
+        # Connect the action's triggered signal to the slot
+        action.triggered.connect(self.delete_item)
+
+        # Add the action to the toolbar
+        toolbar.addAction(action)
+
+    def delete_item(self):
+        self.context_input.setText("")
+        self.criteria_input.setText("")
+        self.options_input.setText("")
+        self.text_area.setText("")
         
     def assign_weights(self):
         # Here you would implement the logic to assign weights
